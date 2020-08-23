@@ -45,7 +45,7 @@ validation_generator = validation_datagen.flow_from_directory(VALIDATION_DIR,
                                                          target_size=(150, 150))
 
 history = model.fit_generator(train_generator,
-                              epochs=4,
+                              epochs=8,
                               validation_data=validation_generator)
 
-model.save('./model.h5')
+model.save('./models/model-8.h5')
