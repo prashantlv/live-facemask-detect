@@ -7,14 +7,12 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 model = Sequential([
     Conv2D(128, (3,3), activation='relu', input_shape=(150,150,3)),
     MaxPooling2D(2,2),
-    Dropout(0.2),
-
+    
     Conv2D(64, (3,3), activation='relu'),
     MaxPooling2D((2,2)),
-    Dropout(0.2),
-
+    
     Flatten(),
-    Dropout(0.4),
+    Dropout(0.5),
     Dense(32, activation='relu'),
     Dense(2,activation='softmax')
 ])
@@ -41,11 +39,11 @@ train_generator = train_datagen.flow_from_directory(
 VALIDATION_DIR = './dataset/test'
 validation_datagen = ImageDataGenerator(rescale=1.0/255)
 validation_generator = validation_datagen.flow_from_directory(VALIDATION_DIR, 
-                                                         batch_size=10, 
+                                                         batch_size=20, 
                                                          target_size=(150, 150))
 
 history = model.fit_generator(train_generator,
-                              epochs=8,
+                              epochs=15,
                               validation_data=validation_generator)
 
-model.save('./models/model-8.h5')
+model.save('./models/model-10.h5')

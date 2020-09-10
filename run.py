@@ -1,22 +1,28 @@
 import cv2 
-import numpy
+import numpy as np
 from tensorflow.keras.models import load_model
 
-model = load_model('./models/model-8.py')
+model = load_model('./models/model-10.h5')
 
-label_dict = {0:'without mask', 1:'masked'}
-color_dict = (0:(0,0,255),1:(0,255,0))
+labels_dict={0:'without mask',1:'mask'}
+color_dict={0:(0,0,255),1:(0,255,0)}
+
+size = 4
 webcam = cv2.VideoCapture(0)
 
 classifier = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
 
 while True:
-    (val, im) = webcam.read()
-    im = cv2.flip(im,1,1)    # create mirror image 
+    (rval, im) = webcam.read()
+    im=cv2.flip(im,1,1) 
 
-    img = cv2.resize(im, (im.shape[1]//4 , im.shape[0]//4))
-    faces = classifier.detectMultiScale(img)
+    # Resize the image to speed up detection
+    mini = cv2.resize(im, (im.shape[1] // size, im.shape[0] // size))
 
+    # detect MultiScale / faces 
+    faces = classifier.detectMultiScale(mini)
+
+    # Draw rectangles around each face
     for f in faces:
         (x, y, w, h) = [v * size for v in f] #Scale the shapesize backup
         #Save just the rectangle faces in SubRecFaces
@@ -34,13 +40,13 @@ while True:
         cv2.rectangle(im,(x,y-40),(x+w,y),color_dict[label],-1)
         cv2.putText(im, labels_dict[label], (x, y-10),cv2.FONT_HERSHEY_SIMPLEX,0.8,(255,255,255),2)
         
-    
+    # Show the image
     cv2.imshow('LIVE',   im)
     key = cv2.waitKey(10)
-     
+    
     if key == 27: #The Esc key
         break
-
+# Stop video
 webcam.release()
 
 # Close all started windows
